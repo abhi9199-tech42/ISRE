@@ -1,4 +1,4 @@
-from typing import Dict, Any, Type
+from typing import Dict, Any, List, Type
 from .base import OutputReconstructor
 from .language import LanguageGenerator
 from .code import CodeGenerator
@@ -22,7 +22,7 @@ class MultiFormatTranslator:
     def register(self, reconstructor: OutputReconstructor):
         self._reconstructors[reconstructor.format_type] = reconstructor
 
-    def translate(self, decision: ReasoningDecision, formats: list[str] = None) -> Dict[str, Any]:
+    def translate(self, decision: ReasoningDecision, formats: List[str] = None) -> Dict[str, Any]:
         """
         Translates a single decision into multiple requested formats.
         """
