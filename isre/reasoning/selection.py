@@ -3,6 +3,7 @@ from ..models.reasoning import ReasoningPath, ReasoningDecision
 from ..models.intent import IntentNode
 from ..types import IntentType
 from .dynamics import OscillatoryGate
+from ..config import ReasoningConfig
 
 class CompetitiveSelector:
     """
@@ -12,9 +13,10 @@ class CompetitiveSelector:
     Requirement 3.3: Oscillatory gating mechanisms.
     """
 
-    def __init__(self, max_oscillation_steps: int = 50, tolerance: float = 0.01):
-        self.max_oscillation_steps = max_oscillation_steps
-        self.tolerance = tolerance
+    def __init__(self, reasoning_config: ReasoningConfig = None):
+        self.config = reasoning_config or ReasoningConfig()
+        self.max_oscillation_steps = self.config.max_oscillation_steps
+        self.tolerance = self.config.oscillation_tolerance
 
     def select(self, paths: List[ReasoningPath]) -> ReasoningDecision:
         if not paths:
@@ -31,7 +33,9 @@ class CompetitiveSelector:
             path.constraint_compliance_score = compliance
             path.semantic_coherence_score = coherence
 
-            base_score = (satisfaction * 0.4) + (compliance * 0.4) + (coherence * 0.2)
+            base_score = (satisfaction * self.config.intent_satisfaction_weight) + \
+                        (compliance * self.config.constraint_compliance_weight) + \
+                        (coherence * self.config.semantic_coherence_weight)
             base_scores.append(base_score)
 
         # 2. Apply oscillatory modulation for temporal dynamics
@@ -69,7 +73,8 @@ class CompetitiveSelector:
         # Initialize one oscillator per path, seeded with base score
         oscillators = []
         for score in base_scores:
-            osc = OscillatoryGate(frequency=1.0, bifurcation=1.0)
+            osc = OscillatoryGate(frequency=self.config.oscillator_frequency,
+                                  bifurcation=self.config.oscillator_bifurcation)
             # Seed initial state proportional to base score
             osc.z = complex(0.1 + score * 0.5, 0.1)
             oscillators.append(osc)

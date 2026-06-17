@@ -3,12 +3,16 @@ import uuid
 from ..models.primitives import SemanticPrimitive
 from ..models.intent import IntentNode, IntentEdge, IntentGraph
 from ..types import IntentType, EdgeType
+from ..config import ConflictConfig
 
 class IntentGraphBuilder:
     """
     Transforms SemanticPrimitives into a structured IntentGraph.
     Implements explicit conflict detection and representation.
     """
+
+    def __init__(self, conflict_config: Optional[ConflictConfig] = None):
+        self.conflict_config = conflict_config or ConflictConfig()
 
     def build_from_primitives(self, primitives: List[SemanticPrimitive]) -> IntentGraph:
         """

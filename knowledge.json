@@ -1,0 +1,16 @@
+{
+  "apple": {
+    "category": "fruit",
+    "color": [
+      "blue"
+    ]
+  },
+  "run": {
+    "category": "action",
+    "energy_cost": "high"
+  },
+  "physics_gravity": {
+    "value": 9.81,
+    "unit": "m/s^2"
+  }
+}

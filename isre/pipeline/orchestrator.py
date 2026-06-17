@@ -10,6 +10,7 @@ from ..knowledge.gaps import KnowledgeGapDetector
 from ..reconstruction.translator import MultiFormatTranslator
 from ..models.reasoning import ReasoningDecision
 from ..utils.resources import ResourceMonitor
+from ..config import PipelineConfig, get_config
 
 class ISREPipeline:
     """
@@ -20,15 +21,20 @@ class ISREPipeline:
     Thread-safe for concurrent request handling.
     """
     
-    def __init__(self, memory_threshold_mb: float = 500.0):
+    def __init__(self, memory_threshold_mb: float = 500.0, config: Optional[PipelineConfig] = None):
+        self.config = config or get_config()
+        # Allow overriding memory threshold via parameter
+        if memory_threshold_mb != 500.0:
+            self.config.memory_threshold_mb = memory_threshold_mb
+        
         self.compression = MultimodalProcessor()
-        self.graph_builder = IntentGraphBuilder()
+        self.graph_builder = IntentGraphBuilder(conflict_config=self.config.conflict)
         self.reasoning_gen = ReasoningPathGenerator()
-        self.selector = CompetitiveSelector()
+        self.selector = CompetitiveSelector(reasoning_config=self.config.reasoning)
         self.knowledge_engine = KnowledgeQueryEngine()
         self.gap_detector = KnowledgeGapDetector(self.knowledge_engine)
         self.translator = MultiFormatTranslator()
-        self.resource_monitor = ResourceMonitor(memory_threshold_mb)
+        self.resource_monitor = ResourceMonitor(self.config.memory_threshold_mb)
         
         self.trace_log: List[Dict[str, Any]] = []
         self._lock = threading.Lock()

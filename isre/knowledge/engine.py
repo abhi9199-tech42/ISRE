@@ -1,5 +1,8 @@
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
+from .backends.base import KnowledgeBackend
+from .backends.json_backend import JSONKnowledgeBackend
+
 
 class KnowledgeQueryResult(BaseModel):
     """
@@ -11,6 +14,7 @@ class KnowledgeQueryResult(BaseModel):
     confidence: float
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
+
 class KnowledgeQueryEngine:
     """
     Interfaces with external structured knowledge sources.
@@ -18,17 +22,12 @@ class KnowledgeQueryEngine:
     Requirement 4.4: Separation between reasoning and knowledge.
     """
     
-    def __init__(self, schema_version: str = "1.0"):
+    def __init__(self, schema_version: str = "1.0", backend: Optional[KnowledgeBackend] = None):
         self.schema_version = schema_version
-        # In a real system, this would connect to databases/APIs
-        self._knowledge_base = {
-            "apple": {"category": "fruit", "edible": True, "color": ["red", "green"]},
-            "run": {"category": "action", "energy_cost": "high"},
-            "physics_gravity": {"value": 9.81, "unit": "m/s^2"}
-        }
+        self._backend = backend or JSONKnowledgeBackend()
         self._cache: Dict[str, KnowledgeQueryResult] = {}
         self.query_log: List[Dict[str, Any]] = []
-
+    
     def query(self, concept_key: str) -> Optional[KnowledgeQueryResult]:
         """
         Retrieves knowledge for a specific concept.
@@ -41,26 +40,35 @@ class KnowledgeQueryEngine:
         if concept_key in self._cache:
             return self._cache[concept_key]
 
-        data = self._knowledge_base.get(concept_key)
+        data = self._backend.query(concept_key)
         if data:
             res = KnowledgeQueryResult(
-                source_id="internal_kb_mock",
+                source_id="json_backend",
                 fact_id=f"fact_{concept_key}",
                 content=data,
                 confidence=1.0,
-                metadata={"schema": self.schema_version}
+                metadata={"schema": self.schema_version, "backend": type(self._backend).__name__}
             )
             self._cache[concept_key] = res
             return res
         return None
-
+    
     def update_knowledge(self, concept_key: str, data: Any):
         """Update or add a new fact to the knowledge base."""
-        self._knowledge_base[concept_key.lower()] = data
+        self._backend.update(concept_key, data)
         # Invalidate cache
         if concept_key.lower() in self._cache:
             del self._cache[concept_key.lower()]
-
+    
     def query_concepts(self, concepts: List[str]) -> Dict[str, Optional[KnowledgeQueryResult]]:
         """Batch query for multiple concepts."""
         return {c: self.query(c) for c in concepts}
+    
+    def get_backend(self) -> KnowledgeBackend:
+        """Get the current knowledge backend."""
+        return self._backend
+    
+    def set_backend(self, backend: KnowledgeBackend):
+        """Set a new knowledge backend."""
+        self._backend = backend
+        self._cache.clear()

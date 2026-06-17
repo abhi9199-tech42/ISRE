@@ -3,6 +3,7 @@ from .base import OutputReconstructor
 from .language import LanguageGenerator
 from .code import CodeGenerator
 from .action import ActionPlanner
+from .markdown import MarkdownGenerator
 from ..models.reasoning import ReasoningDecision
 
 class MultiFormatTranslator:
@@ -18,6 +19,7 @@ class MultiFormatTranslator:
         self.register(LanguageGenerator())
         self.register(CodeGenerator())
         self.register(ActionPlanner())
+        self.register(MarkdownGenerator())
 
     def register(self, reconstructor: OutputReconstructor):
         self._reconstructors[reconstructor.format_type] = reconstructor
