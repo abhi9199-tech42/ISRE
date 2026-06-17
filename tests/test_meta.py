@@ -3,20 +3,28 @@ from isre.pipeline import ISREPipeline
 from unittest.mock import patch
 
 def test_32_2_remove_oscillation():
-    """Test 32.2: What happens if oscillation is bypassed?"""
+    """Test 32.2: What happens if oscillation is bypassed in path selection?"""
     pipeline = ISREPipeline()
     
-    # Mock _ensure_convergence to do nothing (simulate bypassing oscillation logic)
-    with patch.object(ISREPipeline, '_ensure_convergence', return_value=None):
+    # Mock the selector to use simple scoring without oscillatory dynamics
+    def simple_select(paths):
+        from isre.models.reasoning import ReasoningDecision
+        best = max(paths, key=lambda p: p.intent_satisfaction_score)
+        return ReasoningDecision(
+            selected_path=best,
+            justification="Simple selection without oscillation",
+            confidence=0.5,
+            alternative_paths=[p for p in paths if p.id != best.id]
+        )
+    
+    with patch.object(pipeline.selector, 'select', side_effect=simple_select):
         res = pipeline.process("apple", "text")
         request_id = res["request_id"]
         trace = pipeline.get_trace(request_id)
-        # Should NOT have the oscillatory_convergence stage
-        stages = [t["stage"] for t in trace]
-        assert "oscillatory_convergence" not in stages
-        # The system still returns an output because CompetitiveSelector did its job, 
-        # but the "Gate Guarantee" is missing.
+        # The system still returns an output because basic selection works,
+        # but oscillatory modulation is bypassed.
         assert "outputs" in res
+        assert res["decision_metadata"]["confidence"] == 0.5
 
 def test_32_3_remove_intent_graphs():
     """Test 32.3: Degradation when intent graphs are bypassed/simplified."""

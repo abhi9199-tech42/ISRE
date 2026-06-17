@@ -89,17 +89,69 @@ class IntentGraphBuilder:
 
     def _are_conflicting(self, n1: IntentNode, n2: IntentNode) -> bool:
         """Determines if two nodes have conflicting semantics."""
-        # Example logic: "fast" vs "slow" in the same context
         concepts1 = [p.concept for p in n1.semantic_payload]
         concepts2 = [p.concept for p in n2.semantic_payload]
         
+        # Comprehensive opposition mapping
         opposites = {
+            # Speed opposites
             "attribute_fast": "attribute_slow",
-            "action_move_fast": "action_move_slow"
+            "action_move_fast": "action_move_slow",
+            # Size opposites
+            "attribute_large": "attribute_small",
+            "attribute_big": "attribute_small",
+            "attribute_tall": "attribute_short",
+            # Temperature opposites
+            "attribute_hot": "attribute_cold",
+            "attribute_warm": "attribute_cool",
+            # Quantity opposites
+            "attribute_many": "attribute_few",
+            "attribute_much": "attribute_little",
+            "attribute_more": "attribute_less",
+            # Quality opposites
+            "attribute_good": "attribute_bad",
+            "attribute_better": "attribute_worse",
+            "attribute_best": "attribute_worst",
+            # State opposites
+            "attribute_on": "attribute_off",
+            "attribute_open": "attribute_closed",
+            "attribute_start": "attribute_stop",
+            "attribute_begin": "attribute_end",
+            # Direction opposites
+            "attribute_up": "attribute_down",
+            "attribute_high": "attribute_low",
+            "attribute_top": "attribute_bottom",
+            # Logic opposites
+            "attribute_true": "attribute_false",
+            "attribute_yes": "attribute_no",
+            "attribute_always": "attribute_never",
+            # Action opposites
+            "action_create": "action_destroy",
+            "action_add": "action_remove",
+            "action_push": "action_pull",
+            "action_go": "action_stay",
+            "action_move": "action_stop",
+            # Energy opposites
+            "attribute_strong": "attribute_weak",
+            "attribute_hard": "attribute_soft",
+            "attribute_heavy": "attribute_light",
+            # Cost opposites
+            "attribute_expensive": "attribute_cheap",
+            "attribute_cost_high": "attribute_cost_low",
         }
         
         for c1 in concepts1:
             for c2 in concepts2:
                 if opposites.get(c1) == c2 or opposites.get(c2) == c1:
                     return True
+        
+        # Additional heuristic: detect same-prefix conflicts (e.g., action_move_fast vs action_move_slow)
+        for c1 in concepts1:
+            for c2 in concepts2:
+                if c1.startswith("action_") and c2.startswith("action_"):
+                    if c1 != c2 and ("fast" in c1 and "slow" in c2 or "slow" in c1 and "fast" in c2):
+                        return True
+                    if c1 != c2 and ("up" in c1 and "down" in c2 or "down" in c1 and "up" in c2):
+                        return True
+        
         return False

@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Optional
 import uuid
+import threading
 from ..compression.multimodal import MultimodalProcessor
 from ..graph.builder import IntentGraphBuilder
 from ..reasoning.generator import ReasoningPathGenerator
@@ -9,7 +10,6 @@ from ..knowledge.gaps import KnowledgeGapDetector
 from ..reconstruction.translator import MultiFormatTranslator
 from ..models.reasoning import ReasoningDecision
 from ..utils.resources import ResourceMonitor
-from ..reasoning.dynamics import OscillatoryGate
 
 class ISREPipeline:
     """
@@ -17,6 +17,7 @@ class ISREPipeline:
     Coordinates the flow through all five architectural layers.
     Requirement 6.1: Sequential processing through five layers.
     Requirement 6.4: Traceability and diagnostics.
+    Thread-safe for concurrent request handling.
     """
     
     def __init__(self, memory_threshold_mb: float = 500.0):
@@ -30,6 +31,7 @@ class ISREPipeline:
         self.resource_monitor = ResourceMonitor(memory_threshold_mb)
         
         self.trace_log: List[Dict[str, Any]] = []
+        self._lock = threading.Lock()
 
     def process(self, raw_input: Any, modality: str = "text", target_formats: List[str] = None) -> Dict[str, Any]:
         """
@@ -41,8 +43,6 @@ class ISREPipeline:
         # 0. Resource Check (Graceful Degradation - Requirement 7.5)
         if self.resource_monitor.is_resource_constrained():
             self._log(request_id, "degradation", {"reason": "high_memory_usage"})
-            # In constrained mode, we might skip heavy reasoning or simplify graph.
-            # Simplified mode: return raw primitives mapped to text.
             primitives = self.compression.process(raw_input, modality)
             return {
                 "request_id": request_id, 
@@ -66,19 +66,16 @@ class ISREPipeline:
                 "conflicts": [n.id for n in graph.nodes.values() if n.conflict_markers]
             })
             
-            # 3. Designed Reasoning (Generation + Selection)
+            # 3. Designed Reasoning (Generation + Selection with Oscillatory Dynamics)
             paths = self.reasoning_gen.generate_paths(graph)
             self._log(request_id, "reasoning_generation", {"paths_count": len(paths)})
             
             decision = self.selector.select(paths)
             
-            # 3.5 Oscillatory Convergence Guarantee (Requirement 7.3)
-            # Simulate the oscillatory gating process until convergence
-            self._ensure_convergence(request_id)
-            
             self._log(request_id, "reasoning_selection", {
                 "selected_path_id": decision.selected_path.id,
-                "confidence": decision.confidence
+                "confidence": decision.confidence,
+                "convergence_metadata": decision.convergence_metadata
             })
             
             # 4. World Knowledge Integration (Gap Detection)
@@ -96,7 +93,8 @@ class ISREPipeline:
                 "knowledge_gaps": gaps,
                 "decision_metadata": {
                     "justification": decision.justification,
-                    "confidence": decision.confidence
+                    "confidence": decision.confidence,
+                    "convergence_metadata": decision.convergence_metadata
                 }
             }
             
@@ -108,36 +106,17 @@ class ISREPipeline:
             raise
 
     def _log(self, request_id: str, stage: str, data: Dict[str, Any]):
-        self.trace_log.append({
-            "request_id": request_id,
-            "stage": stage,
-            "data": data,
-            "resource_status": self.resource_monitor.get_status()
-        })
-
-    def _ensure_convergence(self, request_id: str):
-        """
-        Simulates oscillatory convergence in finite time.
-        Requirement 7.3.
-        """
-        gate = OscillatoryGate()
-        steps = 0
-        max_steps = 100
-        tolerance = 0.01
-        prev_act = -1.0
-        
-        while steps < max_steps:
-            gate.step()
-            curr_act = gate.activation
-            if abs(curr_act - prev_act) < tolerance and steps > 10:
-                break
-            prev_act = curr_act
-            steps += 1
-            
-        self._log(request_id, "oscillatory_convergence", {"steps_to_converge": steps})
+        with self._lock:
+            self.trace_log.append({
+                "request_id": request_id,
+                "stage": stage,
+                "data": data,
+                "resource_status": self.resource_monitor.get_status()
+            })
 
     def get_trace(self, request_id: str) -> List[Dict[str, Any]]:
         return [entry for entry in self.trace_log if entry["request_id"] == request_id]
 
     def clear(self):
-        self.trace_log.clear()
+        with self._lock:
+            self.trace_log.clear()

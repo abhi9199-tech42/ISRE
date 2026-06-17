@@ -7,17 +7,22 @@ def test_property_18_oscillatory_convergence():
     """
     Property 18: Oscillatory Convergence
     Validates: Requirement 7.3
-    Logic: Ensure the pipeline reaches a decision convergence in finite time.
+    Logic: Ensure the pipeline reaches a decision convergence via oscillatory dynamics.
     """
     pipeline = ISREPipeline()
     result = pipeline.process("apple", "text")
     request_id = result["request_id"]
     
     trace = pipeline.get_trace(request_id)
-    convergence_log = next(t for t in trace if t["stage"] == "oscillatory_convergence")
+    selection_log = next(t for t in trace if t["stage"] == "reasoning_selection")
     
-    assert convergence_log["data"]["steps_to_converge"] > 0
-    assert convergence_log["data"]["steps_to_converge"] <= 100
+    # Verify convergence metadata is present from oscillatory dynamics
+    assert "convergence_metadata" in selection_log["data"]
+    meta = selection_log["data"]["convergence_metadata"]
+    assert "base_scores" in meta
+    assert "final_scores" in meta
+    assert "oscillation_steps" in meta
+    assert meta["oscillation_steps"] > 0
 
 def test_property_19_concurrent_request_isolation():
     """
