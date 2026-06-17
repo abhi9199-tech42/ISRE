@@ -56,4 +56,5 @@ test_outputs/
 reports/
 *.txt
 !requirements.txt
+!requirements-dev.txt
 !pyproject.toml
