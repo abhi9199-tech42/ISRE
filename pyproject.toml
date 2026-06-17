@@ -1,0 +1,21 @@
+[project]
+name = "isre"
+version = "0.1.0"
+description = "Intentional Semantic Reasoning Engine (ISRE)"
+dependencies = [
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "hypothesis>=6.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
