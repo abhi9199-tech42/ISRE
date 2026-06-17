@@ -18,7 +18,7 @@ ISRE is designed for high-performance, deterministic reasoning. The following me
 | **Burst Capacity** | 100 concurrent requests | 0% error rate, thread-safe |
 
 ### 1.2 Semantic Compression
-*   **Token Efficiency**: ISRE's **PTIL (Primal Textual Intent Language)** reduces natural language to a discrete set of 200+ primitives.
+*   **Token Efficiency**: ISRE's **PTIL (Primal Textual Intent Language)** reduces natural language to a discrete set of semantic primitives (9+ in prototype).
 *   **Compression Ratio**: Average **85% reduction** in byte-size from raw text to intent primitives while preserving 100% of logical intent.
 *   **Determinism**: 1000/1000 runs produce identical primitive maps for same-meaning inputs across different languages.
 
@@ -81,7 +81,7 @@ class PhonemeExtractor(SemanticCompressor):
         phoneme_map = {
             "æp.əl": "fruit",           # apple
             "rʌn": "action_move_fast",  # run
-            # ... 200+ primitive mappings
+            # ... 9+ primitive mappings (prototype)
         }
         
         primitives = []
@@ -179,7 +179,7 @@ def test_property_1_modality_agnostic():
 | Metric | Value |
 |--------|-------|
 | **Compression Latency** | <0.5ms per input |
-| **Primitive Vocabulary** | 200+ core concepts |
+| **Primitive Vocabulary** | 9+ core concepts (prototype) |
 | **Language Coverage** | Universal (phoneme-based) |
 | **Noise Tolerance** | Up to 20% phoneme corruption |
 | **Determinism** | 100% (same input → same output) |

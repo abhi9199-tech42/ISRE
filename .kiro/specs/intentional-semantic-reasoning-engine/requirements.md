@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Intentional Semantic Reasoning Engine (ISRE) is a revolutionary AI reasoning system that performs intentional reasoning by operating on semantic signals before language, using deterministic compression, structured intent graphs, and oscillatory decision dynamics, rather than probabilistic next-token prediction. This system treats language as merely an interface, not the core reasoning mechanism.
+The Intentional Semantic Reasoning Engine (ISRE) is a novel AI reasoning system that performs intentional reasoning by operating on semantic signals before language, using deterministic compression, structured intent graphs, and oscillatory decision dynamics, rather than probabilistic next-token prediction. This system treats language as merely an interface, not the core reasoning mechanism.
 
 ## Glossary
 
