@@ -1,11 +1,10 @@
 """Intent graph construction from semantic primitives."""
 
-from typing import List, Dict, Any, Optional
-import uuid
-from ..models.primitives import SemanticPrimitive
-from ..models.intent import IntentNode, IntentEdge, IntentGraph
-from ..types import IntentType, EdgeType
 from ..config import ConflictConfig
+from ..models.intent import IntentEdge, IntentGraph, IntentNode
+from ..models.primitives import SemanticPrimitive
+from ..types import EdgeType, IntentType
+
 
 class IntentGraphBuilder:
     """
@@ -13,10 +12,10 @@ class IntentGraphBuilder:
     Implements explicit conflict detection and representation.
     """
 
-    def __init__(self, conflict_config: Optional[ConflictConfig] = None):
+    def __init__(self, conflict_config: ConflictConfig | None = None):
         self.conflict_config = conflict_config or ConflictConfig()
 
-    def build_from_primitives(self, primitives: List[SemanticPrimitive]) -> IntentGraph:
+    def build_from_primitives(self, primitives: list[SemanticPrimitive]) -> IntentGraph:
         """
         Creates a basic intent graph where each primitive becomes a node.
         In a more advanced implementation, this would involve heuristic or LLM-guided clustering.
@@ -76,7 +75,7 @@ class IntentGraphBuilder:
             for j in range(i + 1, len(node_list)):
                 n1 = node_list[i]
                 n2 = node_list[j]
-                
+
                 # Simple conflict heuristic: opposite semantic concepts
                 if self._are_conflicting(n1, n2):
                     conflict_info = {
@@ -85,7 +84,7 @@ class IntentGraphBuilder:
                         "description": f"Conflict between {n1.id} and {n2.id}"
                     }
                     n1.conflict_markers.append(conflict_info)
-                    
+
                     # Mutual marking
                     n2.conflict_markers.append({
                         "type": "semantic_opposition",
@@ -97,7 +96,7 @@ class IntentGraphBuilder:
         """Determines if two nodes have conflicting semantics."""
         concepts1 = [p.concept for p in n1.semantic_payload]
         concepts2 = [p.concept for p in n2.semantic_payload]
-        
+
         # Comprehensive opposition mapping
         opposites = {
             # Speed opposites
@@ -145,12 +144,12 @@ class IntentGraphBuilder:
             "attribute_expensive": "attribute_cheap",
             "attribute_cost_high": "attribute_cost_low",
         }
-        
+
         for c1 in concepts1:
             for c2 in concepts2:
                 if opposites.get(c1) == c2 or opposites.get(c2) == c1:
                     return True
-        
+
         # Additional heuristic: detect same-prefix conflicts (e.g., action_move_fast vs action_move_slow)
         for c1 in concepts1:
             for c2 in concepts2:
@@ -159,5 +158,5 @@ class IntentGraphBuilder:
                         return True
                     if c1 != c2 and ("up" in c1 and "down" in c2 or "down" in c1 and "up" in c2):
                         return True
-        
+
         return False

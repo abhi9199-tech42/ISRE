@@ -2,8 +2,9 @@
 
 import argparse
 import json
-import sys
 import logging
+import sys
+
 from .pipeline import ISREPipeline
 from .utils.logging import set_level
 

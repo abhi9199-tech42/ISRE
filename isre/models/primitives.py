@@ -1,8 +1,9 @@
 """Semantic primitive data models."""
 
+from typing import Any
+
 from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional
-from ..types import SemanticType
+
 
 class SemanticPrimitive(BaseModel):
     """
@@ -13,8 +14,8 @@ class SemanticPrimitive(BaseModel):
     concept: str
     semantic_weight: float = 1.0
     modality: str = "text"
-    compression_metadata: Dict[str, Any] = Field(default_factory=dict)
-    
+    compression_metadata: dict[str, Any] = Field(default_factory=dict)
+
     def __hash__(self):
         return hash(self.id)
 

@@ -1,9 +1,11 @@
 """Phoneme-based speech input compression."""
 
-from typing import List, Any
 import hashlib
-from .base import SemanticCompressor
+from typing import Any
+
 from ..models.primitives import SemanticPrimitive
+from .base import SemanticCompressor
+
 
 class PhonemeExtractor(SemanticCompressor):
     """
@@ -18,7 +20,7 @@ class PhonemeExtractor(SemanticCompressor):
     def _generate_id(self, concept: str) -> str:
         return hashlib.sha256(concept.encode()).hexdigest()[:12]
 
-    def compress(self, raw_input: Any) -> List[SemanticPrimitive]:
+    def compress(self, raw_input: Any) -> list[SemanticPrimitive]:
         """
         Simulates phoneme-to-semantic conversion.
         Input is expected to be a list of phoneme strings or a simulated audio signal.
@@ -46,5 +48,5 @@ class PhonemeExtractor(SemanticCompressor):
                 concept=concept,
                 modality=self.modality
             ))
-            
+
         return primitives

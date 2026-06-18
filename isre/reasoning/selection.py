@@ -1,11 +1,11 @@
 """Competitive path selection with oscillatory modulation."""
 
-from typing import List
-from ..models.reasoning import ReasoningPath, ReasoningDecision
-from ..models.intent import IntentNode
+
+from ..config import ReasoningConfig
+from ..models.reasoning import ReasoningDecision, ReasoningPath
 from ..types import IntentType
 from .dynamics import OscillatoryGate
-from ..config import ReasoningConfig
+
 
 class CompetitiveSelector:
     """
@@ -20,7 +20,7 @@ class CompetitiveSelector:
         self.max_oscillation_steps = self.config.max_oscillation_steps
         self.tolerance = self.config.oscillation_tolerance
 
-    def select(self, paths: List[ReasoningPath]) -> ReasoningDecision:
+    def select(self, paths: list[ReasoningPath]) -> ReasoningDecision:
         if not paths:
             raise ValueError("Cannot select from empty path list")
 
@@ -63,7 +63,7 @@ class CompetitiveSelector:
             }
         )
 
-    def _apply_oscillatory_modulation(self, base_scores: List[float]) -> List[float]:
+    def _apply_oscillatory_modulation(self, base_scores: list[float]) -> list[float]:
         """
         Apply Hopf oscillator dynamics to modulate path scores over time.
         Each path gets an oscillator; activation converges to highlight the best path.
@@ -98,7 +98,7 @@ class CompetitiveSelector:
 
         # Final activations modulate base scores
         final_scores = []
-        for i, (base, osc) in enumerate(zip(base_scores, oscillators)):
+        for _i, (base, osc) in enumerate(zip(base_scores, oscillators, strict=True)):
             # Combine base score with oscillatory activation
             modulated = (base * 0.6) + (osc.activation * 0.4)
             final_scores.append(modulated)
@@ -122,12 +122,12 @@ class CompetitiveSelector:
         # Penalize if any active node has a conflict marker pointing to another active node in the path
         active_ids = {n.id for n in path.steps}
         conflicts_found = 0
-        
+
         for node in path.steps:
             for marker in node.conflict_markers:
                 if marker['partner_id'] in active_ids:
                     conflicts_found += 1
-        
+
         # If conflicts exist in the path, compliance is low
         if conflicts_found > 0:
             return 0.2

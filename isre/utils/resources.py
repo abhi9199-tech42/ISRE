@@ -1,7 +1,7 @@
 """System resource monitoring for graceful degradation."""
 
-import time
 import os
+import time
 
 try:
     import psutil
@@ -16,7 +16,7 @@ class ResourceMonitor:
     Falls back to basic estimation if psutil is not available.
     Requirement 7.4, 7.5.
     """
-    
+
     def __init__(self, memory_threshold_mb: float = 1000.0):
         self.memory_threshold = memory_threshold_mb
         self._process = None

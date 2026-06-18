@@ -1,8 +1,10 @@
 """Action plan generator output reconstructor."""
 
-from typing import List, Dict, Any
-from .base import OutputReconstructor
+from typing import Any
+
 from ..models.reasoning import ReasoningDecision
+from .base import OutputReconstructor
+
 
 class ActionPlanner(OutputReconstructor):
     """
@@ -13,7 +15,7 @@ class ActionPlanner(OutputReconstructor):
     def format_type(self) -> str:
         return "action"
 
-    def reconstruct(self, decision: ReasoningDecision) -> List[Dict[str, Any]]:
+    def reconstruct(self, decision: ReasoningDecision) -> list[dict[str, Any]]:
         """
         Translates semantics into a JSON-serializable plan.
         """
@@ -25,11 +27,11 @@ class ActionPlanner(OutputReconstructor):
                 "type": step.type.value,
                 "parameters": {}
             }
-            
+
             # Extract params from primitives
             for prim in step.semantic_payload:
                 action_item["parameters"][prim.id] = prim.concept
-                
+
             plan.append(action_item)
-            
+
         return plan

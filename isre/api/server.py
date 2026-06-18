@@ -1,6 +1,6 @@
 """FastAPI REST API server for ISRE."""
 
-from typing import Optional
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
@@ -18,7 +18,7 @@ pipeline = ISREPipeline()
 class ProcessRequest(BaseModel):
     input: str
     modality: str = "text"
-    formats: Optional[list[str]] = None
+    formats: list[str] | None = None
 
 
 class ProcessResponse(BaseModel):

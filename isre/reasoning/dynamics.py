@@ -1,8 +1,8 @@
 """Oscillatory dynamics engine using Hopf bifurcation."""
 
-import math
 import cmath
-from typing import Dict, Any
+from typing import Any
+
 
 class OscillatoryGate:
     """
@@ -42,7 +42,7 @@ class OscillatoryGate:
     def phase(self) -> float:
         return cmath.phase(self.z)
 
-    def get_state(self) -> Dict[str, Any]:
+    def get_state(self) -> dict[str, Any]:
         return {
             "z_real": self.z.real,
             "z_imag": self.z.imag,

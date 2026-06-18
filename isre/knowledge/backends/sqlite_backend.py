@@ -1,10 +1,11 @@
 """SQLite-based knowledge backend for persistent storage."""
 
-from typing import Dict, Any, Optional, List
-import sqlite3
 import json
+import sqlite3
 import threading
 from pathlib import Path
+from typing import Any
+
 from .base import KnowledgeBackend
 
 
@@ -36,7 +37,7 @@ class SQLiteKnowledgeBackend(KnowledgeBackend):
         """)
         conn.commit()
 
-    def query(self, concept_key: str) -> Optional[Any]:
+    def query(self, concept_key: str) -> Any | None:
         conn = self._get_conn()
         cur = conn.execute("SELECT value FROM knowledge WHERE key = ?", (concept_key.lower(),))
         row = cur.fetchone()
@@ -44,7 +45,7 @@ class SQLiteKnowledgeBackend(KnowledgeBackend):
             return None
         return json.loads(row["value"])
 
-    def query_concepts(self, concepts: List[str]) -> Dict[str, Optional[Any]]:
+    def query_concepts(self, concepts: list[str]) -> dict[str, Any | None]:
         return {c: self.query(c) for c in concepts}
 
     def update(self, concept_key: str, data: Any):
@@ -55,7 +56,7 @@ class SQLiteKnowledgeBackend(KnowledgeBackend):
         )
         conn.commit()
 
-    def bulk_update(self, data: Dict[str, Any]):
+    def bulk_update(self, data: dict[str, Any]):
         conn = self._get_conn()
         rows = [(k.lower(), json.dumps(v)) for k, v in data.items()]
         conn.executemany(
@@ -64,7 +65,7 @@ class SQLiteKnowledgeBackend(KnowledgeBackend):
         )
         conn.commit()
 
-    def get_all(self) -> Dict[str, Any]:
+    def get_all(self) -> dict[str, Any]:
         conn = self._get_conn()
         cur = conn.execute("SELECT key, value FROM knowledge")
         return {row["key"]: json.loads(row["value"]) for row in cur.fetchall()}

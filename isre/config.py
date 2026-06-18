@@ -5,21 +5,22 @@ All configs use Pydantic BaseSettings for validation.
 """
 
 import os
-from typing import Dict, Any, Optional
-from pydantic import BaseModel, Field
 from pathlib import Path
+from typing import Any
+
+from pydantic import BaseModel, Field
 
 
 class CompressionConfig(BaseModel):
     """Configuration for semantic compression layer."""
-    semantic_map_path: Optional[str] = None
+    semantic_map_path: str | None = None
     fuzzy_match_threshold: int = 3
     enable_emoji: bool = True
 
 
 class ConflictConfig(BaseModel):
     """Configuration for conflict detection."""
-    custom_opposites: Dict[str, str] = Field(default_factory=dict)
+    custom_opposites: dict[str, str] = Field(default_factory=dict)
     enable_heuristic_detection: bool = True
 
 
@@ -58,46 +59,46 @@ class PipelineConfig(BaseModel):
     reconstruction: ReconstructionConfig = Field(default_factory=ReconstructionConfig)
 
 
-def load_config(config_path: Optional[str] = None) -> PipelineConfig:
+def load_config(config_path: str | None = None) -> PipelineConfig:
     """
     Load configuration from file or environment variables.
-    
+
     Priority:
     1. config_path argument
     2. ISRE_CONFIG environment variable
     3. ./config.json in current directory
     4. Default configuration
     """
-    config_data: Dict[str, Any] = {}
-    
+    config_data: dict[str, Any] = {}
+
     # Try loading from file
     paths_to_try = []
     if config_path:
         paths_to_try.append(Path(config_path))
-    
+
     env_config = os.environ.get("ISRE_CONFIG")
     if env_config:
         paths_to_try.append(Path(env_config))
-    
+
     paths_to_try.append(Path("config.json"))
     paths_to_try.append(Path("config.yaml"))
-    
+
     for path in paths_to_try:
         if path.exists():
             if path.suffix == ".json":
                 import json
-                with open(path, "r") as f:
+                with open(path) as f:
                     config_data = json.load(f)
                 break
             elif path.suffix in (".yaml", ".yml"):
                 try:
                     import yaml
-                    with open(path, "r") as f:
+                    with open(path) as f:
                         config_data = yaml.safe_load(f)
                     break
                 except ImportError:
                     pass
-    
+
     # Override with environment variables
     env_prefix = "ISRE_"
     for key, value in os.environ.items():
@@ -116,12 +117,12 @@ def load_config(config_path: Optional[str] = None) -> PipelineConfig:
                 current[parts[-1]] = float(value) if "." in value else int(value)
             else:
                 current[parts[-1]] = value
-    
+
     return PipelineConfig(**config_data) if config_data else PipelineConfig()
 
 
 # Global config instance
-_config: Optional[PipelineConfig] = None
+_config: PipelineConfig | None = None
 
 
 def get_config() -> PipelineConfig:

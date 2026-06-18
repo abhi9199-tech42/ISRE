@@ -1,9 +1,12 @@
 """Intent graph data models (nodes, edges, graph)."""
 
+from typing import Any
+
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
-from ..types import IntentType, EdgeType
+
+from ..types import EdgeType, IntentType
 from .primitives import SemanticPrimitive
+
 
 class IntentNode(BaseModel):
     """
@@ -11,9 +14,9 @@ class IntentNode(BaseModel):
     """
     id: str
     type: IntentType
-    semantic_payload: List[SemanticPrimitive]
+    semantic_payload: list[SemanticPrimitive]
     activation_level: float = 1.0
-    conflict_markers: List[Dict[str, Any]] = Field(default_factory=list)
+    conflict_markers: list[dict[str, Any]] = Field(default_factory=list)
 
     def __hash__(self):
         return hash(self.id)
@@ -31,14 +34,14 @@ class IntentEdge(BaseModel):
     target_id: str
     relationship_type: EdgeType
     weight: float = 1.0
-    semantic_label: Optional[str] = None
+    semantic_label: str | None = None
 
 class IntentGraph(BaseModel):
     """
     A structured collection of IntentNodes and IntentEdges.
     """
-    nodes: Dict[str, IntentNode] = Field(default_factory=dict)
-    edges: List[IntentEdge] = Field(default_factory=list)
+    nodes: dict[str, IntentNode] = Field(default_factory=dict)
+    edges: list[IntentEdge] = Field(default_factory=list)
 
     def add_node(self, node: IntentNode):
         self.nodes[node.id] = node
@@ -48,18 +51,18 @@ class IntentGraph(BaseModel):
             raise ValueError("Edge source and target nodes must exist in the graph")
         self.edges.append(edge)
 
-    def get_nodes_by_type(self, node_type: IntentType) -> List[IntentNode]:
+    def get_nodes_by_type(self, node_type: IntentType) -> list[IntentNode]:
         """API for external inspection: Returns all nodes of a specific type. (Requirement 8.4)"""
         return [n for n in self.nodes.values() if n.type == node_type]
 
-    def update_node_payload(self, node_id: str, new_payload: List[SemanticPrimitive]):
+    def update_node_payload(self, node_id: str, new_payload: list[SemanticPrimitive]):
         """API for external modification: Updates the semantic payload of a node. (Requirement 8.4)"""
         if node_id in self.nodes:
             self.nodes[node_id].semantic_payload = new_payload
         else:
             raise KeyError(f"Node {node_id} not found in graph")
 
-    def get_neighbors(self, node_id: str) -> List[str]:
+    def get_neighbors(self, node_id: str) -> list[str]:
         return [e.target_id for e in self.edges if e.source_id == node_id]
 
     def has_cycles(self) -> bool:
@@ -68,26 +71,28 @@ class IntentGraph(BaseModel):
         path = set()
 
         def visit(node_id):
-            if node_id in path: return True
-            if node_id in visited: return False
+            if node_id in path:
+                return True
+            if node_id in visited:
+                return False
             visited.add(node_id)
             path.add(node_id)
             for neighbor in self.get_neighbors(node_id):
-                if visit(neighbor): return True
+                if visit(neighbor):
+                    return True
             path.remove(node_id)
             return False
 
         return any(visit(node_id) for node_id in self.nodes)
 
-    def check_priority_inversion(self) -> List[str]:
+    def check_priority_inversion(self) -> list[str]:
         """Test 7.4: Detect if a goal has higher activation than its constraining nodes."""
         inversions = []
         for edge in self.edges:
             src = self.nodes[edge.source_id]
             tgt = self.nodes[edge.target_id]
-            if src.type == IntentType.CONSTRAINT and tgt.type == IntentType.GOAL:
-                if tgt.activation_level > src.activation_level:
-                    inversions.append(f"Inversion: {tgt.id} (Goal) > {src.id} (Constraint)")
+            if src.type == IntentType.CONSTRAINT and tgt.type == IntentType.GOAL and tgt.activation_level > src.activation_level:
+                inversions.append(f"Inversion: {tgt.id} (Goal) > {src.id} (Constraint)")
         return inversions
 
     def clear(self):

@@ -1,12 +1,14 @@
 """Multi-format output coordinator."""
 
-from typing import Dict, Any, List, Type
-from .base import OutputReconstructor
-from .language import LanguageGenerator
-from .code import CodeGenerator
-from .action import ActionPlanner
-from .markdown import MarkdownGenerator
+from typing import Any
+
 from ..models.reasoning import ReasoningDecision
+from .action import ActionPlanner
+from .base import OutputReconstructor
+from .code import CodeGenerator
+from .language import LanguageGenerator
+from .markdown import MarkdownGenerator
+
 
 class MultiFormatTranslator:
     """
@@ -14,9 +16,9 @@ class MultiFormatTranslator:
     Requirement 5.2: Support multiple output languages/formats.
     Requirement 5.3: Express same decision in different formats.
     """
-    
+
     def __init__(self):
-        self._reconstructors: Dict[str, OutputReconstructor] = {}
+        self._reconstructors: dict[str, OutputReconstructor] = {}
         # Register defaults
         self.register(LanguageGenerator())
         self.register(CodeGenerator())
@@ -26,18 +28,18 @@ class MultiFormatTranslator:
     def register(self, reconstructor: OutputReconstructor):
         self._reconstructors[reconstructor.format_type] = reconstructor
 
-    def translate(self, decision: ReasoningDecision, formats: List[str] = None) -> Dict[str, Any]:
+    def translate(self, decision: ReasoningDecision, formats: list[str] = None) -> dict[str, Any]:
         """
         Translates a single decision into multiple requested formats.
         """
         if formats is None:
             formats = list(self._reconstructors.keys())
-            
+
         results = {}
         for fmt in formats:
             if fmt in self._reconstructors:
                 results[fmt] = self._reconstructors[fmt].reconstruct(decision)
             else:
                 results[fmt] = f"Error: Format '{fmt}' not supported"
-        
+
         return results

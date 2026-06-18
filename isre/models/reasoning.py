@@ -1,20 +1,23 @@
 """Reasoning path and decision data models."""
 
+from typing import Any
+
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
-from .intent import IntentNode, IntentEdge
+
+from .intent import IntentNode
+
 
 class ReasoningPath(BaseModel):
     """
     A sequence of steps followed by the reasoning engine.
     """
     id: str
-    steps: List[IntentNode]
+    steps: list[IntentNode]
     intent_satisfaction_score: float = 0.0
     constraint_compliance_score: float = 0.0
     semantic_coherence_score: float = 0.0
-    oscillation_state: Dict[str, Any] = Field(default_factory=dict)
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    oscillation_state: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 class ReasoningDecision(BaseModel):
     """
@@ -23,5 +26,5 @@ class ReasoningDecision(BaseModel):
     selected_path: ReasoningPath
     justification: str
     confidence: float
-    alternative_paths: List[ReasoningPath]
-    convergence_metadata: Dict[str, Any] = Field(default_factory=dict)
+    alternative_paths: list[ReasoningPath]
+    convergence_metadata: dict[str, Any] = Field(default_factory=dict)
