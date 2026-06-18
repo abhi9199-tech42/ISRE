@@ -1,10 +1,16 @@
-.PHONY: install install-dev test lint format typecheck clean build
+.PHONY: install install-all install-dev install-server test test-cov lint format typecheck clean build run serve docker-build
 
 install:
 	pip install -e .
 
+install-all:
+	pip install -e ".[all]"
+
 install-dev:
 	pip install -e ".[test,dev]"
+
+install-server:
+	pip install -e ".[server]"
 
 test:
 	pytest tests/ -v
@@ -30,3 +36,12 @@ build:
 
 run:
 	python -m isre.cli
+
+serve:
+	python -m isre.api.server
+
+docker-build:
+	docker compose build
+
+benchmark:
+	python scripts/benchmark.py

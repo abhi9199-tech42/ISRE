@@ -1,0 +1,12 @@
+services:
+  isre-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ISRE_MEMORY_THRESHOLD_MB=1000.0
+    volumes:
+      - isre_data:/app/data
+
+volumes:
+  isre_data:

@@ -7,6 +7,25 @@ from .backends.base import KnowledgeBackend
 from .backends.json_backend import JSONKnowledgeBackend
 
 
+def create_backend(backend_type: str = "memory", **kwargs) -> KnowledgeBackend:
+    """Factory: create a knowledge backend by type name.
+
+    Args:
+        backend_type: One of "memory", "json", "sqlite"
+        kwargs: Passed to the backend constructor
+
+    Returns:
+        A configured KnowledgeBackend instance
+    """
+    if backend_type == "sqlite":
+        from .backends.sqlite_backend import SQLiteKnowledgeBackend
+        return SQLiteKnowledgeBackend(**kwargs)
+    elif backend_type == "json":
+        return JSONKnowledgeBackend(**kwargs)
+    else:
+        return JSONKnowledgeBackend(**kwargs)
+
+
 class KnowledgeQueryResult(BaseModel):
     """
     Standardized result from any knowledge source.
@@ -25,9 +44,10 @@ class KnowledgeQueryEngine:
     Requirement 4.4: Separation between reasoning and knowledge.
     """
     
-    def __init__(self, schema_version: str = "1.0", backend: Optional[KnowledgeBackend] = None):
+    def __init__(self, schema_version: str = "1.0", backend: Optional[KnowledgeBackend] = None,
+                 backend_type: str = "memory", **backend_kwargs):
         self.schema_version = schema_version
-        self._backend = backend or JSONKnowledgeBackend()
+        self._backend = backend or create_backend(backend_type, **backend_kwargs)
         self._cache: Dict[str, KnowledgeQueryResult] = {}
         self.query_log: List[Dict[str, Any]] = []
     
@@ -45,7 +65,7 @@ class KnowledgeQueryEngine:
         data = self._backend.query(concept_key)
         if data:
             res = KnowledgeQueryResult(
-                source_id="json_backend",
+                source_id=type(self._backend).__name__.replace("KnowledgeBackend", "").lower(),
                 fact_id=f"fact_{concept_key}",
                 content=data,
                 confidence=1.0,

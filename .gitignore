@@ -61,3 +61,5 @@ reports/
 
 # Knowledge backend state
 knowledge.json
+knowledge.db
+*.db

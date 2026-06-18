@@ -56,6 +56,8 @@ pip install -e ".[test]"
 
 ## Quick Start
 
+### Python API
+
 ```python
 from isre.pipeline import ISREPipeline
 
@@ -76,6 +78,59 @@ for entry in trace:
     print(f"{entry['stage']}: {entry['data']}")
 ```
 
+### REST API
+
+```bash
+# Install server extras
+pip install -e ".[server]"
+
+# Start the API server
+isre-server
+
+# Or via uvicorn directly
+uvicorn isre.api.server:app --host 0.0.0.0 --port 8000
+```
+
+```bash
+# Process input
+curl -X POST http://localhost:8000/process \
+  -H "Content-Type: application/json" \
+  -d '{"input": "run quickly but stay slow"}'
+
+# Health check
+curl http://localhost:8000/health
+
+# Get processing trace
+curl http://localhost:8000/trace/<request_id>
+```
+
+### Docker
+
+```bash
+# Build and run
+docker compose up --build
+
+# Or build manually
+docker build -t isre .
+docker run -p 8000:8000 isre
+```
+
+### CLI
+
+```bash
+# Process text
+isre "run quickly but stay slow"
+
+# JSON output with trace
+isre "apple" --json --trace
+
+# Enable debug logging
+isre "fly to the moon" --verbose
+
+# All formats
+isre "stay slow" --format text code action markdown
+```
+
 ## Features
 
 ### Deterministic Processing
@@ -90,7 +145,7 @@ for entry in trace:
 
 ### Knowledge Integration
 - **Gap detection** instead of hallucination — system admits what it doesn't know
-- **Pluggable knowledge backends**: in-memory, JSON file, SQLite (extensible via `KnowledgeBackend` ABC)
+- **Pluggable knowledge backends**: JSON file, SQLite, or custom via `KnowledgeBackend` ABC
 - **Domain-specific logic modules** and physics constraint engine
 
 ### Multi-Modal Output
@@ -138,7 +193,8 @@ export ISRE_REASONING_OSCILLATOR_FREQUENCY=0.5
 ## Development
 
 ```bash
-pip install -e ".[test,dev]"
+# Install with all extras
+pip install -e ".[all]"
 
 # Run all tests
 pytest tests/
@@ -150,7 +206,16 @@ pytest --cov=isre --cov-report=html
 ruff check isre/
 mypy isre/
 
-# Build
+# Run benchmark
+python scripts/benchmark.py
+
+# Start dev server
+make serve
+
+# Build Docker image
+docker compose build
+
+# Build package
 python -m build
 ```
 
