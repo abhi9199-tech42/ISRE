@@ -37,7 +37,7 @@ server = [
 ]
 dev = [
     "ruff>=0.1.0",
-    "mypy>=1.0.0",
+    "mypy==1.11.2",
     "types-PyYAML>=6.0.0",
     "types-psutil>=5.9.0",
 ]

@@ -33,7 +33,8 @@ jobs:
 
       - name: Type check with mypy
         run: |
-          mypy --cache-dir=/dev/null isre/
+          mypy --version
+          mypy --cache-dir=/dev/null --show-error-codes isre/
 
       - name: Run tests
         run: |
