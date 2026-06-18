@@ -1,6 +1,7 @@
 """Knowledge query engine with pluggable backends."""
 
 from typing import List, Dict, Any, Optional
+import time
 from pydantic import BaseModel, Field
 from .backends.base import KnowledgeBackend
 from .backends.json_backend import JSONKnowledgeBackend
@@ -35,7 +36,6 @@ class KnowledgeQueryEngine:
         Retrieves knowledge for a specific concept.
         Returns None if knowledge is missing (Knowledge Gap).
         """
-        import time
         concept_key = concept_key.lower()
         self.query_log.append({"concept": concept_key, "timestamp": time.time()})
         

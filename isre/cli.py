@@ -3,7 +3,9 @@
 import argparse
 import json
 import sys
+import logging
 from .pipeline import ISREPipeline
+from .utils.logging import set_level
 
 
 def main():
@@ -13,12 +15,16 @@ def main():
     )
     parser.add_argument("input", nargs="?", help="Input text to process")
     parser.add_argument("-m", "--modality", default="text", help="Input modality (default: text)")
-    parser.add_argument("-f", "--format", nargs="+", help="Output formats (default: text code action)")
+    parser.add_argument("-f", "--format", nargs="+", help="Output formats (default: text code action markdown)")
     parser.add_argument("--trace", action="store_true", help="Show processing trace")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.1.0")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable debug logging")
+    parser.add_argument("--version", action="version", version="%(prog)s 0.1.0")
 
     args = parser.parse_args()
+
+    if args.verbose:
+        set_level(logging.DEBUG)
 
     if not args.input:
         if sys.stdin.isatty():
@@ -27,7 +33,7 @@ def main():
         args.input = sys.stdin.read().strip()
 
     pipeline = ISREPipeline()
-    formats = args.format or ["text", "code", "action"]
+    formats = args.format or ["text", "code", "action", "markdown"]
 
     try:
         result = pipeline.process(args.input, args.modality, formats)

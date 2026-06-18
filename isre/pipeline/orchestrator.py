@@ -13,6 +13,9 @@ from ..reconstruction.translator import MultiFormatTranslator
 from ..models.reasoning import ReasoningDecision
 from ..utils.resources import ResourceMonitor
 from ..config import PipelineConfig, get_config
+from ..utils.logging import get_logger
+
+log = get_logger(__name__)
 
 class ISREPipeline:
     """
@@ -50,6 +53,7 @@ class ISREPipeline:
         Executes the full pipeline process.
         """
         request_id = str(uuid.uuid4())
+        log.debug("Processing request %s: modality=%s", request_id, modality)
         self._log(request_id, "start", {"input": raw_input, "modality": modality})
         
         # 0. Resource Check (Graceful Degradation - Requirement 7.5)
@@ -65,6 +69,7 @@ class ISREPipeline:
         try:
             # 1. Semantic Compression
             primitives = self.compression.process(raw_input, modality)
+            log.debug("Compressed %d primitives from input", len(primitives))
             self._log(request_id, "compression", {
                 "primitives_count": len(primitives),
                 "primitives": [p.model_dump() for p in primitives]
@@ -114,6 +119,7 @@ class ISREPipeline:
             return final_result
             
         except Exception as e:
+            log.error("Request %s failed: %s", request_id, str(e))
             self._log(request_id, "error", {"message": str(e)})
             raise
 
