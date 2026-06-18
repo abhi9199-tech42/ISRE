@@ -48,7 +48,7 @@ class ISREPipeline:
         self.trace_log: list[dict[str, Any]] = []
         self._lock = threading.Lock()
 
-    def process(self, raw_input: Any, modality: str = "text", target_formats: list[str] = None) -> dict[str, Any]:
+    def process(self, raw_input: Any, modality: str = "text", target_formats: list[str] | None = None) -> dict[str, Any]:
         """
         Executes the full pipeline process.
         """

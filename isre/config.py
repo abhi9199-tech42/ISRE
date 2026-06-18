@@ -92,7 +92,7 @@ def load_config(config_path: str | None = None) -> PipelineConfig:
                 break
             elif path.suffix in (".yaml", ".yml"):
                 try:
-                    import yaml
+                    import yaml  # type: ignore[import-untyped]
                     with open(path) as f:
                         config_data = yaml.safe_load(f)
                     break

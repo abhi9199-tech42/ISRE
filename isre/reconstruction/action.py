@@ -19,9 +19,9 @@ class ActionPlanner(OutputReconstructor):
         """
         Translates semantics into a JSON-serializable plan.
         """
-        plan = []
+        plan: list[dict[str, Any]] = []
         for i, step in enumerate(decision.selected_path.steps):
-            action_item = {
+            action_item: dict[str, Any] = {
                 "step": i + 1,
                 "node_id": step.id,
                 "type": step.type.value,

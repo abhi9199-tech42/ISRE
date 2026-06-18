@@ -15,7 +15,7 @@ class CompetitiveSelector:
     Requirement 3.3: Oscillatory gating mechanisms.
     """
 
-    def __init__(self, reasoning_config: ReasoningConfig = None):
+    def __init__(self, reasoning_config: ReasoningConfig | None = None):
         self.config = reasoning_config or ReasoningConfig()
         self.max_oscillation_steps = self.config.max_oscillation_steps
         self.tolerance = self.config.oscillation_tolerance
