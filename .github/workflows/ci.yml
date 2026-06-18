@@ -34,7 +34,7 @@ jobs:
 
       - name: Type check with mypy
         run: |
-          mypy isre/
+          mypy --cache-dir=/dev/null isre/
 
       - name: Run tests
         run: |
