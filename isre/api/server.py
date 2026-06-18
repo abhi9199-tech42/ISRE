@@ -3,6 +3,7 @@
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from typing import Optional
 
 from ..pipeline import ISREPipeline
 
@@ -18,7 +19,7 @@ pipeline = ISREPipeline()
 class ProcessRequest(BaseModel):
     input: str
     modality: str = "text"
-    formats: list[str] | None = None
+    formats: Optional[list[str]] = None
 
 
 class ProcessResponse(BaseModel):
