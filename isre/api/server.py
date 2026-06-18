@@ -4,7 +4,6 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-
 from ..pipeline import ISREPipeline
 
 app = FastAPI(
