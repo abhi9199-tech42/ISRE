@@ -6,14 +6,14 @@ All configs use Pydantic BaseSettings for validation.
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
 
 class CompressionConfig(BaseModel):
     """Configuration for semantic compression layer."""
-    semantic_map_path: str | None = None
+    semantic_map_path: Optional[str] = None
     fuzzy_match_threshold: int = 3
     enable_emoji: bool = True
 
@@ -59,7 +59,7 @@ class PipelineConfig(BaseModel):
     reconstruction: ReconstructionConfig = Field(default_factory=ReconstructionConfig)
 
 
-def load_config(config_path: str | None = None) -> PipelineConfig:
+def load_config(config_path: Optional[str] = None) -> PipelineConfig:
     """
     Load configuration from file or environment variables.
 
@@ -122,7 +122,7 @@ def load_config(config_path: str | None = None) -> PipelineConfig:
 
 
 # Global config instance
-_config: PipelineConfig | None = None
+_config: Optional[PipelineConfig] = None
 
 
 def get_config() -> PipelineConfig:

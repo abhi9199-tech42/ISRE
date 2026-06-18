@@ -1,6 +1,6 @@
 """Intent graph data models (nodes, edges, graph)."""
 
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -34,7 +34,7 @@ class IntentEdge(BaseModel):
     target_id: str
     relationship_type: EdgeType
     weight: float = 1.0
-    semantic_label: str | None = None
+    semantic_label: Optional[str] = None
 
 class IntentGraph(BaseModel):
     """

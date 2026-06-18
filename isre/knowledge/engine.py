@@ -1,7 +1,7 @@
 """Knowledge query engine with pluggable backends."""
 
 import time
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -46,14 +46,14 @@ class KnowledgeQueryEngine:
     Requirement 4.4: Separation between reasoning and knowledge.
     """
 
-    def __init__(self, schema_version: str = "1.0", backend: KnowledgeBackend | None = None,
+    def __init__(self, schema_version: str = "1.0", backend: Optional[KnowledgeBackend] = None,
                  backend_type: str = "memory", **backend_kwargs):
         self.schema_version = schema_version
         self._backend = backend or create_backend(backend_type, **backend_kwargs)
         self._cache: dict[str, KnowledgeQueryResult] = {}
         self.query_log: list[dict[str, Any]] = []
 
-    def query(self, concept_key: str) -> KnowledgeQueryResult | None:
+    def query(self, concept_key: str) -> Optional[KnowledgeQueryResult]:
         """
         Retrieves knowledge for a specific concept.
         Returns None if knowledge is missing (Knowledge Gap).
@@ -84,7 +84,7 @@ class KnowledgeQueryEngine:
         if concept_key.lower() in self._cache:
             del self._cache[concept_key.lower()]
 
-    def query_concepts(self, concepts: list[str]) -> dict[str, KnowledgeQueryResult | None]:
+    def query_concepts(self, concepts: list[str]) -> dict[str, Optional[KnowledgeQueryResult]]:
         """Batch query for multiple concepts."""
         return {c: self.query(c) for c in concepts}
 

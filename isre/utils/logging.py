@@ -2,11 +2,12 @@
 
 import logging
 import sys
+from typing import Optional
 
-_LOG: logging.Logger | None = None
+_LOG: Optional[logging.Logger] = None
 
 
-def get_logger(name: str = "isre", level: int | None = None) -> logging.Logger:
+def get_logger(name: str = "isre", level: Optional[int] = None) -> logging.Logger:
     """Get or create the ISRE logger.
 
     Args:

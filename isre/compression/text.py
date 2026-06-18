@@ -1,6 +1,7 @@
 """Text-based semantic compression via ConceptMapper."""
 
 import hashlib
+from typing import Optional
 
 from ..models.primitives import SemanticPrimitive
 from .base import SemanticCompressor
@@ -12,7 +13,7 @@ class ConceptMapper(SemanticCompressor):
     Implementation focuses on removing grammar and syntax while preserving meaning.
     """
 
-    def __init__(self, semantic_map: dict[str, str] | None = None):
+    def __init__(self, semantic_map: Optional[dict[str, str]] = None):
         self._semantic_map = semantic_map or {
             # === FRUITS & FOOD (10) ===
             "apple": "fruit", "pomme": "fruit", "manzana": "fruit",

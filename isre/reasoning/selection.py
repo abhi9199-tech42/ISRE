@@ -1,6 +1,8 @@
 """Competitive path selection with oscillatory modulation."""
 
 
+from typing import Optional
+
 from ..config import ReasoningConfig
 from ..models.reasoning import ReasoningDecision, ReasoningPath
 from ..types import IntentType
@@ -15,7 +17,7 @@ class CompetitiveSelector:
     Requirement 3.3: Oscillatory gating mechanisms.
     """
 
-    def __init__(self, reasoning_config: ReasoningConfig | None = None):
+    def __init__(self, reasoning_config: Optional[ReasoningConfig] = None):
         self.config = reasoning_config or ReasoningConfig()
         self.max_oscillation_steps = self.config.max_oscillation_steps
         self.tolerance = self.config.oscillation_tolerance

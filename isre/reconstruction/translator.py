@@ -1,6 +1,6 @@
 """Multi-format output coordinator."""
 
-from typing import Any
+from typing import Any, Optional
 
 from ..models.reasoning import ReasoningDecision
 from .action import ActionPlanner
@@ -28,7 +28,7 @@ class MultiFormatTranslator:
     def register(self, reconstructor: OutputReconstructor):
         self._reconstructors[reconstructor.format_type] = reconstructor
 
-    def translate(self, decision: ReasoningDecision, formats: list[str] | None = None) -> dict[str, Any]:
+    def translate(self, decision: ReasoningDecision, formats: Optional[list[str]] = None) -> dict[str, Any]:
         """
         Translates a single decision into multiple requested formats.
         """

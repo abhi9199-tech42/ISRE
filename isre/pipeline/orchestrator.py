@@ -2,7 +2,7 @@
 
 import threading
 import uuid
-from typing import Any
+from typing import Any, Optional
 
 from ..compression.multimodal import MultimodalProcessor
 from ..config import PipelineConfig, get_config
@@ -26,7 +26,7 @@ class ISREPipeline:
     Thread-safe for concurrent request handling.
     """
 
-    def __init__(self, memory_threshold_mb: float = 500.0, config: PipelineConfig | None = None):
+    def __init__(self, memory_threshold_mb: float = 500.0, config: Optional[PipelineConfig] = None):
         # Deep copy the config to avoid mutating the global singleton
         if config is not None:
             self.config = config.model_copy(deep=True)

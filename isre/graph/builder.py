@@ -1,5 +1,7 @@
 """Intent graph construction from semantic primitives."""
 
+from typing import Optional
+
 from ..config import ConflictConfig
 from ..models.intent import IntentEdge, IntentGraph, IntentNode
 from ..models.primitives import SemanticPrimitive
@@ -12,7 +14,7 @@ class IntentGraphBuilder:
     Implements explicit conflict detection and representation.
     """
 
-    def __init__(self, conflict_config: ConflictConfig | None = None):
+    def __init__(self, conflict_config: Optional[ConflictConfig] = None):
         self.conflict_config = conflict_config or ConflictConfig()
 
     def build_from_primitives(self, primitives: list[SemanticPrimitive]) -> IntentGraph:
