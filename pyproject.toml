@@ -38,6 +38,7 @@ server = [
 dev = [
     "ruff>=0.1.0",
     "mypy>=1.0.0",
+    "types-PyYAML>=6.0.0",
 ]
 all = [
     "isre[test,server,dev]",
