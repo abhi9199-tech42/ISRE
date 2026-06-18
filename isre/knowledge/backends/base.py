@@ -58,6 +58,16 @@ class KnowledgeBackend(ABC):
         """Clear all knowledge."""
         pass
     
+    def bulk_update(self, data: Dict[str, Any]):
+        """
+        Bulk load multiple facts efficiently.
+        
+        Args:
+            data: Dictionary mapping keys to knowledge data
+        """
+        for key, value in data.items():
+            self.update(key, value)
+    
     def is_modified(self) -> bool:
         """
         Check if the knowledge storage has been modified.

@@ -57,7 +57,7 @@ def test_property_21_comprehensive_system_extensibility():
     assert res["custom_format"] == "RECONSTRUCTED_CUSTOM"
 
     # 3. Test knowledge extension
-    pipeline.knowledge_engine._knowledge_base["new_fact"] = {"data": 123}
+    pipeline.knowledge_engine.update_knowledge("new_fact", {"data": 123})
     assert pipeline.knowledge_engine.query("new_fact").content["data"] == 123
 
 def test_property_22_intent_graph_api_accessibility():

@@ -58,3 +58,6 @@ reports/
 !requirements.txt
 !requirements-dev.txt
 !pyproject.toml
+
+# Knowledge backend state
+knowledge.json

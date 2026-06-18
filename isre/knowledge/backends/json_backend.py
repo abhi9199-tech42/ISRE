@@ -64,6 +64,12 @@ class JSONKnowledgeBackend(KnowledgeBackend):
         self._cache[concept_key.lower()] = data
         self._save()
     
+    def bulk_update(self, data: Dict[str, Any]):
+        """Bulk load multiple facts efficiently (single file write)."""
+        for key, value in data.items():
+            self._cache[key.lower()] = value
+        self._save()
+    
     def get_all(self) -> Dict[str, Any]:
         """Get all knowledge facts."""
         return self._cache.copy()

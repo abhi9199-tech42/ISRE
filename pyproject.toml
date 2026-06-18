@@ -13,6 +13,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
     "hypothesis>=6.0.0",
 ]
 dev = [
@@ -30,6 +31,19 @@ build-backend = "setuptools.build_meta"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+addopts = "--cov=isre --cov-report=term-missing --cov-report=html"
+
+[tool.coverage.run]
+source = ["isre"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
 
 [tool.ruff]
 line-length = 100

@@ -22,7 +22,11 @@ class ISREPipeline:
     """
     
     def __init__(self, memory_threshold_mb: float = 500.0, config: Optional[PipelineConfig] = None):
-        self.config = config or get_config()
+        # Deep copy the config to avoid mutating the global singleton
+        if config is not None:
+            self.config = config.model_copy(deep=True)
+        else:
+            self.config = get_config().model_copy(deep=True)
         # Allow overriding memory threshold via parameter
         if memory_threshold_mb != 500.0:
             self.config.memory_threshold_mb = memory_threshold_mb

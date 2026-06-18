@@ -55,11 +55,13 @@ def test_25_2_reasoning_depth_scaling():
 def test_25_3_knowledge_source_scaling():
     """Test 25.3: Knowledge source scaling (1M Facts)."""
     engine = KnowledgeQueryEngine()
+    backend = engine.get_backend()
     
     print("\n[Scalability] Knowledge Source Scaling (Populating 1M facts)...")
     start_pop = time.time()
-    for i in range(1000000):
-        engine._knowledge_base[f"fact_{i}"] = {"data": i}
+    # Populate backend cache directly (avoids file I/O per fact)
+    fact_data = {f"fact_{i}": {"data": i} for i in range(1000000)}
+    backend.bulk_update(fact_data)
     end_pop = time.time()
     print(f"  Population time: {end_pop - start_pop:.2f}s")
     
@@ -72,4 +74,3 @@ def test_25_3_knowledge_source_scaling():
     
     assert res is not None
     assert res.content["data"] == 999999
-    # Python dict lookups are O(1) so this should be nearly instantaneous regardless of size

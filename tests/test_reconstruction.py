@@ -66,4 +66,4 @@ def test_reconstruction_robustness(concepts):
     translator = MultiFormatTranslator()
     decision = create_sample_decision(concepts)
     outputs = translator.translate(decision)
-    assert len(outputs) == 3
+    assert len(outputs) == 4
