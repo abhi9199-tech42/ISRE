@@ -30,14 +30,14 @@ class ResourceMonitor:
         """Returns memory usage in MB."""
         if self._process:
             try:
-                return self._process.memory_info().rss / (1024 * 1024)  # type: ignore[no-any-return]
+                return self._process.memory_info().rss / (1024 * 1024)  # type: ignore
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
         # Fallback: estimate based on Python's resource module (Unix only)
         try:
             import resource
-            usage = resource.getrusage(resource.RUSAGE_SELF)  # type: ignore[attr-defined]
-            return usage.ru_maxrss / 1024  # type: ignore[no-any-return]  # Convert KB to MB on Linux
+            usage = resource.getrusage(resource.RUSAGE_SELF)  # type: ignore
+            return usage.ru_maxrss / 1024  # type: ignore  # Convert KB to MB on Linux
         except (ImportError, AttributeError):
             # Windows fallback: return 0 (no memory tracking)
             return 0.0

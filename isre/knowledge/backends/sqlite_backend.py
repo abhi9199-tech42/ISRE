@@ -24,7 +24,7 @@ class SQLiteKnowledgeBackend(KnowledgeBackend):
         if not hasattr(self._local, "conn") or self._local.conn is None:
             self._local.conn = sqlite3.connect(str(self._path))
             self._local.conn.row_factory = sqlite3.Row
-        return self._local.conn  # type: ignore[no-any-return]
+        return self._local.conn  # type: ignore
 
     def _init_db(self):
         conn = self._get_conn()
