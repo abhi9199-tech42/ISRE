@@ -27,10 +27,11 @@ class ActionPlanner(OutputReconstructor):
                 "type": step.type.value,
                 "parameters": {}
             }
+            parameters: dict[str, str] = action_item["parameters"]  # type: ignore[assignment]
 
             # Extract params from primitives
             for prim in step.semantic_payload:
-                action_item["parameters"][prim.id] = prim.concept
+                parameters[prim.id] = prim.concept
 
             plan.append(action_item)
 
