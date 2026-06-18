@@ -1,6 +1,7 @@
 # Intentional Semantic Reasoning Engine (ISRE)
 
 [![CI](https://github.com/abhi9199-tech42/ISRE/actions/workflows/ci.yml/badge.svg)](https://github.com/abhi9199-tech42/ISRE/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/isre-engine.svg)](https://pypi.org/project/isre-engine/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
@@ -42,6 +43,14 @@ A deterministic, 5-layer semantic reasoning system that converts natural languag
 ```
 
 ## Installation
+
+### From PyPI (recommended)
+
+```bash
+pip install isre-engine
+```
+
+### From source
 
 ```bash
 git clone https://github.com/abhi9199-tech42/ISRE.git

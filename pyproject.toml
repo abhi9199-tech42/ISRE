@@ -1,9 +1,9 @@
 [project]
-name = "isre"
+name = "isre-engine"
 version = "0.1.0"
 description = "Intentional Semantic Reasoning Engine - A deterministic, 5-layer semantic reasoning system"
 readme = "README.md"
-license = {text = "GPL-3.0-only"}
+license = "GPL-3.0-only"
 requires-python = ">=3.10"
 keywords = ["reasoning", "semantic", "nlp", "deterministic", "intent"]
 authors = [
@@ -13,7 +13,6 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -56,6 +55,10 @@ isre-server = "isre.api.server:main"
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["isre*"]
+exclude = ["test_outputs*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
