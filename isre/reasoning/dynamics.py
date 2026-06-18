@@ -1,3 +1,5 @@
+"""Oscillatory dynamics engine using Hopf bifurcation."""
+
 import math
 import cmath
 from typing import Dict, Any

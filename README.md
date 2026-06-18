@@ -1,12 +1,17 @@
 # Intentional Semantic Reasoning Engine (ISRE)
 
-A deterministic, 5-layer semantic reasoning system that converts natural language into language-agnostic semantic primitives, builds explicit intent graphs, generates multiple competing reasoning paths, and reconstructs decisions into text, code, or actions.
+[![CI](https://github.com/abhi9199-tech42/ISRE/actions/workflows/ci.yml/badge.svg)](https://github.com/abhi9199-tech42/ISRE/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
+
+A deterministic, 5-layer semantic reasoning system that converts natural language into language-agnostic semantic primitives, builds explicit intent graphs, generates multiple competing reasoning paths, and reconstructs decisions into text, code, markdown, or action plans.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    ISRE Pipeline                            │
+│                    ISRE Pipeline (v0.1)                      │
 ├─────────────────────────────────────────────────────────────┤
 │  Layer 1: Semantic Compression                              │
 │  ├── Text → ConceptMapper                                   │
@@ -17,20 +22,21 @@ A deterministic, 5-layer semantic reasoning system that converts natural languag
 │  └── IntentGraphBuilder (nodes, edges, conflicts)           │
 ├─────────────────────────────────────────────────────────────┤
 │  Layer 3: Designed Reasoning Engine                         │
-│  ├── ReasoningPathGenerator (multi-path)                    │
+│  ├── ReasoningPathGenerator (multi-path branching)          │
 │  ├── CompetitiveSelector (multi-objective scoring)          │
-│  └── OscillatoryGate (Hopf bifurcation dynamics)            │
+│  └── Oscillatory Dynamics (Hopf bifurcation modulation)     │
 ├─────────────────────────────────────────────────────────────┤
 │  Layer 4: World Knowledge Integration                       │
-│  ├── KnowledgeQueryEngine (external KB interface)           │
-│  ├── KnowledgeGapDetector (missing knowledge)               │
+│  ├── KnowledgeQueryEngine (pluggable backends)              │
+│  ├── KnowledgeGapDetector (void-filling)                   │
 │  ├── PhysicsRuleEngine (physical constraints)               │
 │  └── DomainLogicManager (plugin system)                     │
 ├─────────────────────────────────────────────────────────────┤
 │  Layer 5: Semantic Reconstruction                           │
-│  ├── LanguageGenerator (→ text)                             │
-│  ├── CodeGenerator (→ code)                                 │
-│  ├── ActionPlanner (→ action plan)                          │
+│  ├── LanguageGenerator → text                               │
+│  ├── CodeGenerator → code                                   │
+│  ├── MarkdownGenerator → markdown                           │
+│  ├── ActionPlanner → structured actions                     │
 │  └── MultiFormatTranslator (coordinator)                    │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -38,15 +44,13 @@ A deterministic, 5-layer semantic reasoning system that converts natural languag
 ## Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/abhi9199-tech42/ISRE.git
 cd ISRE
 
-# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Windows: venv\Scripts\activate
+source venv/bin/activate
 
-# Install dependencies
 pip install -e ".[test]"
 ```
 
@@ -55,18 +59,18 @@ pip install -e ".[test]"
 ```python
 from isre.pipeline import ISREPipeline
 
-# Initialize the pipeline
 pipeline = ISREPipeline()
 
-# Process natural language input
+# Process natural language
 result = pipeline.process("Run quickly but stay slow.", "text")
 
-# Access outputs
-print(result["outputs"]["text"])   # Text output
-print(result["outputs"]["code"])   # Code output
-print(result["outputs"]["action"]) # Action plan
+# Multi-format output
+print(result["outputs"]["text"])     # Natural language
+print(result["outputs"]["code"])     # Python code
+print(result["outputs"]["markdown"]) # Markdown document
+print(result["outputs"]["action"])   # Action plan
 
-# Inspect reasoning trace
+# Trace every processing stage
 trace = pipeline.get_trace(result["request_id"])
 for entry in trace:
     print(f"{entry['stage']}: {entry['data']}")
@@ -75,77 +79,79 @@ for entry in trace:
 ## Features
 
 ### Deterministic Processing
-- SHA-256 hashing for consistent primitive IDs
-- No probabilistic next-token prediction
-- Full traceability of every decision
+- **SHA-256 hashing** for consistent, deterministic primitive IDs
+- **No probabilistic next-token prediction** — every output is derived from explicit transformations
+- **Full traceability** of every decision through the pipeline
 
 ### Conflict Resolution
-- Explicit conflict detection between semantic concepts
-- Multi-path generation with branching strategies
-- Oscillatory dynamics (Hopf bifurcations) for path selection
+- **Explicit conflict detection** between semantic concepts (30+ opposition pairs + heuristic patterns)
+- **Multi-path generation** with branching strategies for conflict resolution
+- **Oscillatory dynamics** (Hopf bifurcation) for competitive path selection
 
 ### Knowledge Integration
-- Gap detection instead of hallucination
-- Pluggable knowledge backends (SQLite, PostgreSQL, JSON)
-- Domain-specific logic modules
+- **Gap detection** instead of hallucination — system admits what it doesn't know
+- **Pluggable knowledge backends**: in-memory, JSON file, SQLite (extensible via `KnowledgeBackend` ABC)
+- **Domain-specific logic modules** and physics constraint engine
 
 ### Multi-Modal Output
-- Natural language generation
-- Code snippet generation
-- Structured action plans
+All four output formats are generated from the same internal `ReasoningDecision`:
+
+| Format | Generator | Description |
+|--------|-----------|-------------|
+| `text` | `LanguageGenerator` | Natural language explanation |
+| `code` | `CodeGenerator` | Executable code snippet |
+| `markdown` | `MarkdownGenerator` | Formatted decision document |
+| `action` | `ActionPlanner` | Structured action plan |
 
 ## Configuration
 
-Create a `config.toml` in your project root:
+The system supports JSON, YAML, and environment variable configuration:
 
-```toml
-[pipeline]
-memory_threshold_mb = 500.0
+```json
+{
+  "memory_threshold_mb": 1000.0,
+  "compression": {
+    "enable_emoji": true
+  },
+  "reasoning": {
+    "oscillator_frequency": 1.0,
+    "oscillator_bifurcation": 1.0,
+    "max_oscillation_steps": 50
+  },
+  "knowledge": {
+    "backend": "json",
+    "json_path": "knowledge.json"
+  },
+  "reconstruction": {
+    "enable_markdown": true
+  }
+}
+```
 
-[compression]
-semantic_map_path = "path/to/custom_map.json"
+Or via environment variables with `ISRE_` prefix:
 
-[reasoning]
-oscillator_frequency = 1.0
-oscillator_bifurcation = 1.0
-
-[knowledge]
-backend = "sqlite"
-db_path = "knowledge.db"
+```bash
+export ISRE_MEMORY_THRESHOLD_MB=1000.0
+export ISRE_REASONING_OSCILLATOR_FREQUENCY=0.5
 ```
 
 ## Development
 
-### Setup
-
 ```bash
-pip install -e ".[test]"
-```
+pip install -e ".[test,dev]"
 
-### Running Tests
+# Run all tests
+pytest tests/
 
-```bash
-# Unit tests
-pytest tests/unit/
-
-# Integration tests
-pytest tests/integration/
-
-# All tests with coverage
+# With coverage
 pytest --cov=isre --cov-report=html
-```
 
-### Code Quality
-
-```bash
-# Linting
+# Lint and type-check
 ruff check isre/
-
-# Formatting
-ruff format isre/
-
-# Type checking
 mypy isre/
+
+# Build
+python -m build
 ```
 
 ## Project Structure
@@ -154,114 +160,98 @@ mypy isre/
 ISRE/
 ├── isre/
 │   ├── __init__.py
-│   ├── types.py                    # Enums: IntentType, EdgeType, SemanticType
-│   ├── models/                     # Pydantic data models
-│   │   ├── primitives.py           # SemanticPrimitive
-│   │   ├── intent.py               # IntentNode, IntentEdge, IntentGraph
-│   │   └── reasoning.py            # ReasoningPath, ReasoningDecision
-│   ├── compression/                # Layer 1: Semantic Compression
-│   │   ├── base.py                 # SemanticCompressor (ABC)
-│   │   ├── text.py                 # ConceptMapper
-│   │   ├── speech.py               # PhonemeExtractor
-│   │   └── multimodal.py           # MultimodalProcessor
-│   ├── graph/                      # Layer 2: Intent Graph
-│   │   └── builder.py              # IntentGraphBuilder
-│   ├── reasoning/                  # Layer 3: Reasoning Engine
-│   │   ├── generator.py            # ReasoningPathGenerator
-│   │   ├── selection.py            # CompetitiveSelector
-│   │   └── dynamics.py             # OscillatoryGate
-│   ├── knowledge/                  # Layer 4: Knowledge Integration
-│   │   ├── engine.py               # KnowledgeQueryEngine
-│   │   ├── gaps.py                 # KnowledgeGapDetector
-│   │   ├── physics.py              # PhysicsRuleEngine
-│   │   └── domain.py               # DomainLogicManager
-│   ├── reconstruction/             # Layer 5: Output Generation
-│   │   ├── base.py                 # OutputReconstructor (ABC)
-│   │   ├── language.py             # LanguageGenerator
-│   │   ├── code.py                 # CodeGenerator
-│   │   ├── action.py               # ActionPlanner
-│   │   └── translator.py           # MultiFormatTranslator
-│   ├── pipeline/                   # Orchestrator
-│   │   └── orchestrator.py         # ISREPipeline
+│   ├── types.py                     # Enums: IntentType, EdgeType, SemanticType
+│   ├── config.py                    # Pydantic config system (JSON/YAML/env)
+│   ├── cli.py                       # CLI entry point
+│   ├── models/                      # Pydantic data models
+│   │   ├── primitives.py
+│   │   ├── intent.py
+│   │   └── reasoning.py
+│   ├── compression/                 # Layer 1
+│   │   ├── base.py
+│   │   ├── text.py
+│   │   ├── speech.py
+│   │   └── multimodal.py
+│   ├── graph/                       # Layer 2
+│   │   └── builder.py
+│   ├── reasoning/                   # Layer 3
+│   │   ├── generator.py
+│   │   ├── selection.py
+│   │   └── dynamics.py
+│   ├── knowledge/                   # Layer 4
+│   │   ├── engine.py
+│   │   ├── gaps.py
+│   │   ├── physics.py
+│   │   ├── domain.py
+│   │   └── backends/
+│   │       ├── base.py
+│   │       └── json_backend.py
+│   ├── reconstruction/              # Layer 5
+│   │   ├── base.py
+│   │   ├── language.py
+│   │   ├── code.py
+│   │   ├── action.py
+│   │   ├── markdown.py
+│   │   └── translator.py
+│   ├── pipeline/                    # Orchestrator
+│   │   └── orchestrator.py
 │   └── utils/
-│       ├── architectural_validator.py
-│       └── resources.py
-├── tests/                          # Test suite
-├── examples/                       # Demo scripts
-├── docs/                           # Documentation
-├── pyproject.toml                  # Build configuration
-└── LICENSE                         # GPL-3.0 License
+│       ├── resources.py
+│       └── architectural_validator.py
+├── tests/                           # 69 tests (pytest + Hypothesis)
+├── examples/                        # Demo scripts
+├── docs/                            # Additional documentation
+├── roadmapproduction.md             # Production roadmap
+├── pyproject.toml                   # Build & tool config
+├── tox.ini                          # Multi-Python testing
+├── Makefile                         # Common commands
+└── LICENSE                          # GPL-3.0
 ```
 
-## Key Concepts
+## API Reference
 
-### Semantic Primitives
-Atomic units of meaning, language-agnostic, with deterministic IDs:
+### `ISREPipeline`
+
 ```python
-SemanticPrimitive(
-    id="sem_abc123def456",
-    concept="fruit",
-    modality="text",
-    semantic_weight=1.0
+pipeline = ISREPipeline(memory_threshold_mb=500.0, config=None)
+result = pipeline.process(input, modality="text", target_formats=None)
+trace = pipeline.get_trace(request_id)
+pipeline.clear()
+```
+
+### `ReasoningDecision`
+
+```python
+decision = ReasoningDecision(
+    selected_path=path,          # The winning ReasoningPath
+    justification="string",      # Why this path was chosen
+    confidence=0.0..1.0,         # Confidence score
+    alternative_paths=[...],     # Alternative ReasoningPath objects
+    convergence_metadata={...}   # Oscillatory dynamics metadata
 )
 ```
 
-### Intent Graph
-Directed graph with typed nodes and explicit conflict markers:
-```python
-IntentNode(
-    id="node_1",
-    type=IntentType.GOAL,
-    semantic_payload=[primitive],
-    conflict_markers=[{"partner_id": "node_2", "type": "semantic_opposition"}]
-)
-```
+### Knowledge Backends
 
-### Oscillatory Dynamics
-Hopf bifurcation dynamics for path activation gating:
-```
-dz/dt = z(mu - |z|²) + iωz
+```python
+from isre.knowledge.backends import JSONKnowledgeBackend, SQLiteKnowledgeBackend
+
+# Custom backend
+class MyBackend(KnowledgeBackend):
+    def query(self, concept_key): ...
+    def update(self, concept_key, data): ...
+    def query_concepts(self, concepts): ...
+    def bulk_update(self, data): ...
 ```
 
 ## Roadmap
 
-See [roadmapproduction.md](roadmapproduction.md) for the full production roadmap.
-
-### Current Status: Prototype (v0.1.0)
-- [x] Core 5-layer architecture
-- [x] Basic semantic compression
-- [x] Intent graph construction
-- [x] Multi-path reasoning
-- [x] Knowledge integration
-- [x] Multi-format output
-- [x] Comprehensive test suite
-
-### Next Steps
-- [ ] Production bug fixes
-- [ ] Configuration system
-- [ ] Knowledge base upgrade (SQLite)
-- [ ] Expanded concept mappings
-- [ ] CLI interface
-- [ ] API server
-- [ ] Docker deployment
-- [ ] PyPI publication
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+See [roadmapproduction.md](roadmapproduction.md) for the production roadmap.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+GNU General Public License v3.0 — see [LICENSE](LICENSE).
 
-## Acknowledgments
+## Contributing
 
-- Built with Python 3.13+
-- Uses Pydantic for data validation
-- Tested with pytest and Hypothesis
+See [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -1,3 +1,5 @@
+"""Main ISRE pipeline orchestrator."""
+
 from typing import Any, Dict, List, Optional
 import uuid
 import threading

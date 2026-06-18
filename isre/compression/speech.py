@@ -1,3 +1,5 @@
+"""Phoneme-based speech input compression."""
+
 from typing import List, Any
 import hashlib
 from .base import SemanticCompressor

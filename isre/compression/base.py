@@ -1,3 +1,5 @@
+"""Abstract base class for semantic compressors."""
+
 from abc import ABC, abstractmethod
 from typing import List, Any
 from ..models.primitives import SemanticPrimitive

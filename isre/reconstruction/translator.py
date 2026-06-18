@@ -1,3 +1,5 @@
+"""Multi-format output coordinator."""
+
 from typing import Dict, Any, List, Type
 from .base import OutputReconstructor
 from .language import LanguageGenerator

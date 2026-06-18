@@ -1,3 +1,5 @@
+"""Abstract base class for output reconstructors."""
+
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 from ..models.reasoning import ReasoningDecision

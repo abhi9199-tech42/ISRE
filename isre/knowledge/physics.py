@@ -1,3 +1,5 @@
+"""Physics constraint rule engine for physical possibility validation."""
+
 from typing import Dict, Any, List
 
 class PhysicsRuleEngine:

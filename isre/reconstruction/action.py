@@ -1,3 +1,5 @@
+"""Action plan generator output reconstructor."""
+
 from typing import List, Dict, Any
 from .base import OutputReconstructor
 from ..models.reasoning import ReasoningDecision

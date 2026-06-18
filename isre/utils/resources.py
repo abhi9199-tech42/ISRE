@@ -1,3 +1,5 @@
+"""System resource monitoring for graceful degradation."""
+
 import time
 import os
 

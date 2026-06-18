@@ -1,3 +1,5 @@
+"""Knowledge query engine with pluggable backends."""
+
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 from .backends.base import KnowledgeBackend

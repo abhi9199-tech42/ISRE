@@ -1,3 +1,5 @@
+"""Core type definitions and enums for the ISRE system."""
+
 from enum import Enum, auto
 from typing import List, Dict, Any, Optional, Union
 from pydantic import BaseModel, Field

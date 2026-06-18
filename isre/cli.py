@@ -1,3 +1,5 @@
+"""Command-line interface for ISRE."""
+
 import argparse
 import json
 import sys

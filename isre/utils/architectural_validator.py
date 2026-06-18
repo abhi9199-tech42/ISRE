@@ -1,3 +1,5 @@
+"""Architectural layer separation validator."""
+
 import ast
 import os
 from typing import List, Dict, Set

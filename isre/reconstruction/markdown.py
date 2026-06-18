@@ -1,3 +1,5 @@
+"""Markdown document output reconstructor."""
+
 from typing import Dict
 from .base import OutputReconstructor
 from ..models.reasoning import ReasoningDecision

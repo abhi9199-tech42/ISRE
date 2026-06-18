@@ -1,3 +1,5 @@
+"""Natural language output reconstructor."""
+
 from .base import OutputReconstructor
 from ..models.reasoning import ReasoningDecision
 

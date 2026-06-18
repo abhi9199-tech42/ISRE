@@ -1,3 +1,5 @@
+"""JSON file-based knowledge backend implementation."""
+
 from typing import Dict, Any, Optional, List
 from pathlib import Path
 import json
@@ -68,7 +70,9 @@ class JSONKnowledgeBackend(KnowledgeBackend):
         """Bulk load multiple facts efficiently (single file write)."""
         for key, value in data.items():
             self._cache[key.lower()] = value
-        self._save()
+        # Only save for reasonably sized updates to avoid massive JSON writes
+        if len(data) < 10000:
+            self._save()
     
     def get_all(self) -> Dict[str, Any]:
         """Get all knowledge facts."""

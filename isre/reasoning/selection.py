@@ -1,3 +1,5 @@
+"""Competitive path selection with oscillatory modulation."""
+
 from typing import List
 from ..models.reasoning import ReasoningPath, ReasoningDecision
 from ..models.intent import IntentNode

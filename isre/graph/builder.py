@@ -1,3 +1,5 @@
+"""Intent graph construction from semantic primitives."""
+
 from typing import List, Dict, Any, Optional
 import uuid
 from ..models.primitives import SemanticPrimitive

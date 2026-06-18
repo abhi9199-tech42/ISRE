@@ -1,3 +1,5 @@
+"""Multimodal input processor routing inputs to appropriate compressors."""
+
 from typing import List, Dict, Any
 from .base import SemanticCompressor
 from .text import ConceptMapper

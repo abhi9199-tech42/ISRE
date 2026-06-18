@@ -1,3 +1,5 @@
+"""Multi-path reasoning path generator."""
+
 from typing import List, Dict, Any, Tuple
 import uuid
 import copy

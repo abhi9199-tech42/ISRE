@@ -1,3 +1,5 @@
+"""Intent graph data models (nodes, edges, graph)."""
+
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 from ..types import IntentType, EdgeType

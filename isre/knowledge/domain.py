@@ -1,3 +1,5 @@
+"""Domain-specific logic module system."""
+
 from typing import Any, Dict, Protocol
 from .backends.base import KnowledgeBackend
 from .backends.json_backend import JSONKnowledgeBackend

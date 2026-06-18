@@ -1,3 +1,5 @@
+"""Reasoning path and decision data models."""
+
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 from .intent import IntentNode, IntentEdge

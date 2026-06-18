@@ -1,3 +1,5 @@
+"""Semantic primitive data models."""
+
 from pydantic import BaseModel, Field
 from typing import Dict, Any, Optional
 from ..types import SemanticType

@@ -1,3 +1,9 @@
+"""Configuration system for ISRE pipeline.
+
+Supports JSON, YAML, and environment variable configuration sources.
+All configs use Pydantic BaseSettings for validation.
+"""
+
 import os
 from typing import Dict, Any, Optional
 from pydantic import BaseModel, Field

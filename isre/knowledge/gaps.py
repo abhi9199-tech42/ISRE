@@ -1,3 +1,5 @@
+"""Knowledge gap detection for unanswerable queries."""
+
 from typing import List, Set
 from ..models.reasoning import ReasoningDecision
 from .engine import KnowledgeQueryEngine
